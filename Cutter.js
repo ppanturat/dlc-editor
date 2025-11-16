@@ -100,19 +100,27 @@ function initSpriteCutter() {
 
     // --- Parse filename to extract folder and animation names ---
     function parseFilename(filename) {
-        // Expected format: CharacterName_AnimationName_Sheet.ext
-        // Example: Warrior_Idle_Sheet.png -> folder: Warrior, anim: Idle
         const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-        const parts = nameWithoutExt.split('_');
         
-        if (parts.length >= 3 && parts[parts.length - 1].toLowerCase() === 'sheet') {
-            const folder = parts[0];
-            const anim = parts[1];
-            const prefix = `${folder}_${anim}_`;
-            return { folder, anim, prefix };
+        // Check for the expected suffix, case-insensitive
+        if (nameWithoutExt.toLowerCase().endsWith('_sheet')) {
+            // Remove the _sheet suffix
+            const baseName = nameWithoutExt.substring(0, nameWithoutExt.length - 6); 
+            
+            // Find the last underscore
+            const lastUnderscoreIndex = baseName.lastIndexOf('_');
+            
+            // Ensure there is an underscore and it's not the first or last char
+            if (lastUnderscoreIndex > 0 && lastUnderscoreIndex < baseName.length - 1) {
+                const folder = baseName.substring(0, lastUnderscoreIndex);
+                const anim = baseName.substring(lastUnderscoreIndex + 1);
+                const prefix = `${folder}_${anim}_`;
+                return { folder, anim, prefix };
+            }
         }
         
-        // Fallback: user will need to set these manually
+        // Fallback if parsing fails
+        console.warn(`Could not parse filename: ${filename}. Expected format: CharacterName_AnimationName_Sheet.ext`);
         return { folder: '', anim: '', prefix: '' };
     }
 
