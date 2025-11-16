@@ -82,13 +82,14 @@
                 </div>
             </fieldset>
 
-            <button type="button" id="add_unit_button">Add Unit to JSON</button>
-            <button type="button" id="clear_unit_form" class="small-button">Clear</button>
+            <button type="button" id="add_unit_button">Add as New Unit</button>
+            <button type="button" id="update_unit_button" class="small-button">Update Selected Unit</button>
+            <button type="button" id="clear_unit_form" class="small-button">Clear Form</button>
             
             <fieldset>
                 <legend>Current Units in Project</legend>
                 <div class="form-group">
-                    <label for="unit_list">Select a unit to remove:</label>
+                    <label for="unit_list">Click a unit to load it for editing:</label>
                     <select id="unit_list" size="5"></select>
                 </div>
                 <button type="button" id="delete_unit_button" class="small-button">Delete Selected</button>
@@ -109,14 +110,14 @@
 
             <fieldset>
                 <legend>Select Animation</legend>
-                <p style="font-size: 0.9em; color: #555;">These names define the file path (e.g., ./data/<strong>NewHero</strong>/<strong>Idle</strong>/NewHero_Idle_1.png)</p>
+                <p style="font-size: 0.9em; color: #555;">These names define the file path (e.g., /data/<strong>NewHero</strong>/<strong>Idle</strong>/1.png)</p>
                 <div class="form-group">
                     <label for="char_select">Character Folder Name</label>
-                    <input type="text" id="char_select" placeholder="NewHero">
+                    <input type="text" id="char_select" placeholder="e.g., NewHero">
                 </div>
                 <div class="form-group">
                     <label for="anim_select">Animation Name</label>
-                    <input type="text" id="anim_select" placeholder="Idle">
+                    <input type="text" id="anim_select" placeholder="e.g., Idle">
                 </div>
             </fieldset>
     
@@ -124,7 +125,7 @@
                 <legend>Configure Animation Files</legend>
                 <div class="form-group">
                     <label for="prefix_input">Image File Prefix</label>
-                    <input type="text" id="prefix_input" placeholder="NewHero_Idle_">
+                    <input type="text" id="prefix_input" placeholder="e.g., NewHero_Idle_">
                 </div>
                 <div class="form-group">
                     <label for="ext_input">File Extension</label>
@@ -185,37 +186,31 @@
             
             <h3>Unit Editor (.json) Tab</h3>
             <ol>
-                <li><strong>Load Project (Optional):</strong> Click "Choose File" to load an existing `config.json` to edit.</li>
-                <li><strong>Fill Details:</strong> Fill in the Name, Health, ATK, DEF, and Description for your new unit.</li>
-                <li><strong>Set Configs:</strong> Type the `.txt` filenames you will use for this unit (e.g., `NewHero_Idle.txt`).</li>
-                <li><strong>Add Unit:</strong> Click "Add Unit to JSON". The unit will appear in the "Current Units" list.</li>
-                <li><strong>Manage Units:</strong> You can add more units or select one from the list and click "Delete Selected".</li>
-                <li><strong>Download:</strong> Click "Download config.json" to save the file.</li>
+                <li><strong>Load Project (Optional):</strong> Click "Choose File" to load an existing `config.json`.</li>
+                <li><strong>Fill Details:</strong> Fill in the form for a new unit.</li>
+                <li><strong>Add Unit:</strong> Click "Add as New Unit".</li>
+                <li><strong>Edit a Unit:</strong> Click a unit's name from the "Current Units" list. Its data will load into the form.</li>
+                <li><strong>Save Edits:</strong> Change the data, then click "Update Selected Unit".</li>
+                <li><strong>Manage Units:</strong> Select a unit and click "Delete Selected" or "Delete All Units".</li>
+                <li><strong>Download:</strong> Click "Download config.json" to save.</li>
             </ol>
 
             <h3>Sprite Editor (.txt) Tab</h3>
             <ol>
-                <li><strong>Set Names:</strong> Type the `Character Folder Name` and `Animation Name`. These define the folder path (e.g., `data/Warrior/Idle`).</li>
-                <li><strong>Configure Files:</strong> Set the `Image File Prefix` (e.g., `Warrior_Idle_`), extension, and total `Frame Count`.</li>
-                <li><strong>Set Position:</strong> Set the X/Y coordinates and Scale for the animation.</li>
+                <li><strong>Set Names:</strong> Type the `Character Folder Name` and `Animation Name` (e.g., `data/Warrior/Idle`).</li>
+                <li><strong>Configure Files:</strong> Set the `Image File Prefix` (e.g., `Warrior_Idle_`), extension, and `Frame Count`.</li>
+                <li><strong>Set Position:</strong> Set the X/Y coordinates and Scale.</li>
                 <li><strong>Test Preview (Optional):</strong>
                     <ul>
                         <li>Make sure you have a `data` folder inside this editor's project folder.</li>
                         <li>Check the "Enable Live Preview" box.</li>
-                        <li>The animation will appear in the preview box.</li>
-                        <li><strong>Tip:</strong> To test, try:
-                            <ul>
-                                <li>Folder Name: `Warrior`</li>
-                                <li>Animation Name: `Idle`</li>
-                                <li>Prefix: `Warrior_Idle_`</li>
-                                <li>Frame Count: `6`</li>
-                            </ul>
-                        </li>
+                        <li><strong>Test Tip:</strong> Folder: `Warrior`, Animation: `Idle`, Prefix: `Warrior_Idle_`, Frames: `6`</li>
                     </ul>
                 </li>
-                <li><strong>Download:</strong> Click "Download .txt" to save the config string for this single animation.</li>
+                <li><strong>Download:</strong> Click "Download .txt" to save the config string.</li>
             </ol>
         </div>
     </div>
+
     </body>
 </html>

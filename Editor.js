@@ -1,5 +1,7 @@
 // this holds the list of units for the .json file
 let allUnits = [];
+// --- variable to track what's being edited ---
+let currentlyEditingIndex = -1; // -1 means "not editing"
 
 // wait for the html document to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,24 +34,17 @@ document.addEventListener('DOMContentLoaded', () => {
     contentUnit.style.display = 'block';
     contentSprite.style.display = 'none';
     
-    // --- new help modal logic ---
+    // --- help modal logic ---
     const helpIcon = document.getElementById('help-icon');
     const modal = document.getElementById('help-modal');
     const closeModal = document.getElementById('close-modal');
-
-    helpIcon.onclick = () => {
-        modal.style.display = 'block';
-    }
-    closeModal.onclick = () => {
-        modal.style.display = 'none';
-    }
-    // close the modal if user clicks on the dark background
+    helpIcon.onclick = () => { modal.style.display = 'block'; }
+    closeModal.onclick = () => { modal.style.display = 'none'; }
     window.onclick = (event) => {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
     }
-    // --- end of new logic ---
 });
 
 /**
@@ -155,10 +150,11 @@ function initUnitEditor() {
     const importButton = document.getElementById('import_json');
     const clearUnitFormButton = document.getElementById('clear_unit_form');
     
-    // delete feature
+    // edit/delete
     const unitList = document.getElementById('unit_list');
     const deleteUnitButton = document.getElementById('delete_unit_button');
     const deleteAllUnitsButton = document.getElementById('delete_all_units_button');
+    const updateUnitButton = document.getElementById('update_unit_button'); // new button
     
     // file display
     const fileNameDisplay = document.getElementById('file_name_display');
@@ -191,6 +187,8 @@ function initUnitEditor() {
         attackSelect.value = '';
         walkSelect.value = '';
         deathSelect.value = '';
+        
+        currentlyEditingIndex = -1; // reset editing state
     }
 
     function addUnit() {
@@ -199,26 +197,7 @@ function initUnitEditor() {
             unitName.focus();
             return;
         }
-        if (idleSelect.value.trim() === '') {
-            alert('Please enter an Idle Animation file name.');
-            idleSelect.focus();
-            return;
-        }
-        if (attackSelect.value.trim() === '') {
-            alert('Please enter an Attack Animation file name.');
-            attackSelect.focus();
-            return;
-        }
-        if (walkSelect.value.trim() === '') {
-            alert('Please enter a Walk Animation file name.');
-            walkSelect.focus();
-            return;
-        }
-        if (deathSelect.value.trim() === '') {
-            alert('Please enter a Death Animation file name.');
-            deathSelect.focus();
-            return;
-        }
+        // validation
 
         const health = unitHealth.value || unitHealth.placeholder;
         const atk = unitAtk.value || unitAtk.placeholder;
@@ -264,14 +243,87 @@ function initUnitEditor() {
         event.target.value = null;
     }
 
+    /**
+     * new function: loads a unit's data into the form for editing
+     */
+    function loadUnitForEditing() {
+        const selectedIndex = unitList.value;
+        if (selectedIndex === '') return; // nothing selected
+
+        const index = parseInt(selectedIndex);
+        const unit = allUnits[index];
+        
+        // populate the form
+        unitName.value = unit.detail.name;
+        unitHealth.value = unit.detail.health;
+        unitAtk.value = unit.detail.atk;
+        unitDef.value = unit.detail.def;
+        unitDesc.value = unit.detail.description;
+        idleSelect.value = unit.idleConfig;
+        attackSelect.value = unit.attackConfig;
+        walkSelect.value = unit.walkConfig;
+        deathSelect.value = unit.deathConfig;
+        
+        // set the editing index
+        currentlyEditingIndex = index;
+    }
+    
+    /**
+     * new function: saves changes to the currently editing unit
+     */
+    function updateSelectedUnit() {
+        if (currentlyEditingIndex === -1) {
+            alert('Please click a unit from the list to load it before updating.');
+            return;
+        }
+        
+        // validation (same as addunit)
+        if (unitName.value.trim() === '') {
+            alert('Please enter a Character Name.');
+            unitName.focus();
+            return;
+        }
+        
+        // get values from form
+        const health = unitHealth.value || unitHealth.placeholder;
+        const atk = unitAtk.value || unitAtk.placeholder;
+        const def = unitDef.value || unitDef.placeholder;
+        
+        // create the updated unit object
+        const updatedUnit = {
+            "detail": { "name": unitName.value, "health": parseInt(health), "atk": parseInt(atk), "def": parseInt(def), "description": unitDesc.value || "No description." },
+            "idleConfig": idleSelect.value, "attackConfig": attackSelect.value, "walkConfig": walkSelect.value, "deathConfig": deathSelect.value
+        };
+        
+        // replace the old unit with the new one
+        allUnits[currentlyEditingIndex] = updatedUnit;
+        
+        // refresh everything
+        updateJsonOutput();
+        updateUnitList();
+        clearUnitForm();
+    }
+
     function deleteSelectedUnit() {
         const selectedIndex = unitList.value;
         if (selectedIndex === '') {
             alert('Please select a unit to delete.');
             return;
         }
+        
+        // if the user deletes the unit they are editing, clear the form
+        if (currentlyEditingIndex == selectedIndex) {
+            clearUnitForm();
+        }
+        
         const indexToDelete = parseInt(selectedIndex);
         allUnits.splice(indexToDelete, 1);
+        
+        // if this messed up the editing index, reset it
+        if (currentlyEditingIndex > indexToDelete) {
+             currentlyEditingIndex--;
+        }
+
         updateJsonOutput();
         updateUnitList();
     }
@@ -284,6 +336,7 @@ function initUnitEditor() {
         
         if (confirm('Are you sure you want to delete all units? This cannot be undone.')) {
             allUnits = [];
+            clearUnitForm();
             updateJsonOutput();
             updateUnitList();
         }
@@ -295,6 +348,8 @@ function initUnitEditor() {
     deleteUnitButton.addEventListener('click', deleteSelectedUnit);
     clearUnitFormButton.addEventListener('click', clearUnitForm);
     deleteAllUnitsButton.addEventListener('click', deleteAllUnits);
+    updateUnitButton.addEventListener('click', updateSelectedUnit); // new
+    unitList.addEventListener('click', loadUnitForEditing); // new
 
     downloadButton.addEventListener('click', () => {
         if (allUnits.length === 0) {

@@ -63,6 +63,14 @@ button {
 
 button:hover { background: #218838; }
 
+/* --- update button (green) --- */
+#update_unit_button {
+    background: #28a745; /* green */
+}
+#update_unit_button:hover {
+    background: #218838;
+}
+
 fieldset {
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -123,7 +131,7 @@ legend {
 }
 #clear_unit_form:hover,
 #clear_sprite_form:hover {
-    background:#fd7e14;
+    background:#e66a00;
 }
 
 /* delete buttons (red) */
@@ -133,7 +141,7 @@ legend {
 }
 #delete_unit_button:hover,
 #delete_all_units_button:hover {
-    background:#dc3545;
+    background:#c82333;
 }
 
 
