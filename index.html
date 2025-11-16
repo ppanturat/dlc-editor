@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="libraries/p5.min.js"></script>
+    <script language="javascript" type="text/javascript" src="Editor.js"></script>
+    <script language="javascript" type="text/javascript" src="Preview.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+
+    <title>DLC Editor</title>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="help-icon">?</div>
+
+        <h1>DLC Editor</h1>
+
+        <div class="tab-nav">
+            <button class="tab-link active" id="tab-unit">Unit Editor (.json)</button>
+            <button class="tab-link" id="tab-sprite">Sprite Editor (.txt)</button>
+        </div>
+
+        <div class="tab-content active" id="unit-editor-content">
+            <p>Use this tool to create new characters. Add one or more units, then download the final <strong>config.json</strong> file.</p>
+            
+            <fieldset>
+                <legend>Load Existing Project</legend>
+                <div class="form-group" id="file-upload-group">
+                    <input type="file" id="import_json" accept=".json" style="display: none;">
+                    <label for="import_json" class="file-upload-label">Choose File</label>
+                    <span id="file_name_display">No file selected.</span>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Character Details</legend>
+                <div class="form-group">
+                    <label for="unit_name">Name</label>
+                    <input type="text" id="unit_name" placeholder="e.g., Shadow Knight">
+                </div>
+                <div class="form-group">
+                    <label for="unit_health">Health</label>
+                    <input type="number" id="unit_health" placeholder="100" min="70" max="150">
+                </div>
+                <div class="form-group">
+                    <label for="unit_atk">Attack (ATK)</label>
+                    <input type="number" id="unit_atk" placeholder="10" min="8" max="20">
+                </div>
+                <div class="form-group">
+                    <label for="unit_def">Defense (DEF)</label>
+                    <input type="number" id="unit_def" placeholder="10" min="5" max="20">
+                </div>
+                <div class="form-group">
+                    <label for="unit_desc">Description</label>
+                    <textarea id="unit_desc" placeholder="A mysterious warrior... (max 200 chars)" maxlength="200"></textarea>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Animation Config Selection</legend>
+                <p style="font-size: 0.9em; color: #555;">Type the <strong>.txt</strong> filenames you will use for this unit.</p>
+                <div class="form-group">
+                    <label for="unit_idle">Idle Animation (.txt file)</label>
+                    <input type="text" id="unit_idle" placeholder="e.g., NewHero_Idle.txt">
+                </div>
+                <div class="form-group">
+                    <label for="unit_attack">Attack Animation (.txt file)</label>
+                    <input type="text" id="unit_attack" placeholder="e.g., NewHero_Attack.txt">
+                </div>
+                <div class="form-group">
+                    <label for="unit_walk">Walk Animation (.txt file)</label>
+                    <input type="text" id="unit_walk" placeholder="e.g., NewHero_Walk.txt">
+                </div>
+                <div class="form-group">
+                    <label for="unit_death">Death Animation (.txt file)</label>
+                    <input type="text" id="unit_death" placeholder="e.g., NewHero_Death.txt">
+                </div>
+            </fieldset>
+
+            <button type="button" id="add_unit_button">Add Unit to JSON</button>
+            <button type="button" id="clear_unit_form" class="small-button">Clear</button>
+            
+            <fieldset>
+                <legend>Current Units in Project</legend>
+                <div class="form-group">
+                    <label for="unit_list">Select a unit to remove:</label>
+                    <select id="unit_list" size="5"></select>
+                </div>
+                <button type="button" id="delete_unit_button" class="small-button">Delete Selected</button>
+                <button type="button" id="delete_all_units_button" class="small-button">Delete All Units</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Generated config.json</legend>
+                <div class="form-group">
+                    <textarea id="unit_json_output" readonly placeholder="Your 'units' array will be built here..."></textarea>
+                </div>
+                <button type="button" id="unit_download_button">Download config.json</button>
+            </fieldset>
+        </div>
+
+        <div class="tab-content" id="sprite-editor-content">
+            <p>Use this tool to create <strong>.txt</strong> config strings for the animation system.</p>
+
+            <fieldset>
+                <legend>Select Animation</legend>
+                <p style="font-size: 0.9em; color: #555;">These names define the file path (e.g., /data/<strong>NewHero</strong>/<strong>Idle</strong>/1.png)</p>
+                <div class="form-group">
+                    <label for="char_select">Character Folder Name</label>
+                    <input type="text" id="char_select" placeholder="NewHero">
+                </div>
+                <div class="form-group">
+                    <label for="anim_select">Animation Name</label>
+                    <input type="text" id="anim_select" placeholder="Idle">
+                </div>
+            </fieldset>
+    
+            <fieldset>
+                <legend>Configure Animation Files</legend>
+                <div class="form-group">
+                    <label for="prefix_input">Image File Prefix</label>
+                    <input type="text" id="prefix_input" placeholder="NewHero_Idle_">
+                </div>
+                <div class="form-group">
+                    <label for="ext_input">File Extension</label>
+                    <select id="ext_input">
+                        <option value=".png">.png</option>
+                        <option value=".jpg">.jpg</option>
+                        <option value=".jpeg">.jpeg</option>
+                        <option value=".gif">.gif</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="frame_count">Frame Count</label>
+                    <input type="number" id="frame_count" placeholder="5" min="1">
+                </div>
+            </fieldset>
+    
+            <fieldset>
+                <legend>Set Position and Scale</legend>
+                <div class="form-group"> 
+                    <label for="pos_x">Position X</label>
+                    <input type="number" id="pos_x" placeholder="260">
+                </div>
+                <div class="form-group">
+                    <label for="pos_y">Position Y</label>
+                    <input type="number" id="pos_y" placeholder="170">
+                </div>
+                <div class="form-group">
+                    <label for="scale_input">Scale</label>
+                    <input type="number" id="scale_input" placeholder="3" min="1">
+                </div>
+            </fieldset>
+    
+            <fieldset>
+                <legend>Generated Config</legend>
+                <div class="form-group">
+                    <textarea id="config_output" readonly placeholder="Config string will appear here..."></textarea>
+                </div>
+                <button type="button" id="download_button">Download .txt</button>
+                <button type="button" id="clear_sprite_form" class="small-button">Clear</button>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Live Preview</legend>
+                <div class="form-group-inline">
+                    <input type="checkbox" id="enable_preview_check">
+                    <label for="enable_preview_check">Enable Live Preview (Requires 'data' folder)</label>
+                </div>
+            </fieldset>
+            
+            <div class="preview-box" id="canvas-container">
+            </div>
+        </div>
+
+    </div> <div id="help-modal">
+        <div class="modal-content">
+            <span id="close-modal">&times;</span>
+            <h2>How to Use This Editor</h2>
+            
+            <h3>Unit Editor (.json) Tab</h3>
+            <ol>
+                <li><strong>Load Project (Optional):</strong> Click "Choose File" to load an existing `config.json` to edit.</li>
+                <li><strong>Fill Details:</strong> Fill in the Name, Health, ATK, DEF, and Description for your new unit.</li>
+                <li><strong>Set Configs:</strong> Type the `.txt` filenames you will use for this unit (e.g., `NewHero_Idle.txt`).</li>
+                <li><strong>Add Unit:</strong> Click "Add Unit to JSON". The unit will appear in the "Current Units" list.</li>
+                <li><strong>Manage Units:</strong> You can add more units or select one from the list and click "Delete Selected".</li>
+                <li><strong>Download:</strong> Click "Download config.json" to save the file.</li>
+            </ol>
+
+            <h3>Sprite Editor (.txt) Tab</h3>
+            <ol>
+                <li><strong>Set Names:</strong> Type the `Character Folder Name` and `Animation Name`. These define the folder path (e.g., `data/Warrior/Idle`).</li>
+                <li><strong>Configure Files:</strong> Set the `Image File Prefix` (e.g., `Warrior_Idle_`), extension, and total `Frame Count`.</li>
+                <li><strong>Set Position:</strong> Set the X/Y coordinates and Scale for the animation.</li>
+                <li><strong>Test Preview (Optional):</strong>
+                    <ul>
+                        <li>Make sure you have a `data` folder inside this editor's project folder.</li>
+                        <li>Check the "Enable Live Preview" box.</li>
+                        <li>The animation will appear in the preview box.</li>
+                        <li><strong>Tip:</strong> To test, try:
+                            <ul>
+                                <li>Folder Name: `Warrior`</li>
+                                <li>Animation Name: `Idle`</li>
+                                <li>Prefix: `Warrior_Idle_`</li>
+                                <li>Frame Count: `6`</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Download:</strong> Click "Download .txt" to save the config string for this single animation.</li>
+            </ol>
+        </div>
+    </div>
+    </body>
+</html>

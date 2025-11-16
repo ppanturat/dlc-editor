@@ -1,0 +1,270 @@
+body { 
+    font-family: sans-serif; 
+    margin: 0px 20px 40px; 
+    background-color: #f9f9f9;
+    line-height: 1.5;
+}
+
+.container { 
+    max-width: 700px; 
+    margin: auto; 
+    background: #fff; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.form-group { 
+    margin-top: 10px;
+    margin-bottom: 15px; 
+}
+
+/* --- title styles --- */
+.D {
+  color: #ff007f;
+}
+
+.C {
+  color: #006699;
+}
+
+label { 
+    display: block; 
+    font-weight: bold; 
+    margin-bottom: 5px; 
+}
+
+input, select, textarea { 
+    width: 100%; 
+    padding: 8px; 
+    box-sizing: border-box; 
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+textarea {
+    font-family: monospace;
+    height: 100px;
+    background: #eee;
+}
+
+/* --- primary buttons (green) --- */
+button {
+    padding: 10px 15px;
+    background: #28a745 ; /* green */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+button:hover { background: #218838; }
+
+fieldset {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 20px 20px;
+    margin-top: 20px;
+}
+
+legend {
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 0 10px;
+    color: #333;
+}
+
+/* --- tab navigation styles --- */
+.tab-nav {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.tab-link {
+    padding: 10px 15px;
+    cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: -2px;
+}
+
+.tab-link:hover { background: #e9e9e9; }
+
+.tab-link.active {
+    background: #fff;
+    border-bottom: 2px solid #fff;
+    font-weight: bold;
+    color: #000;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+/* --- end tab styles --- */
+
+/* --- secondary/destructive buttons --- */
+.small-button {
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+/* clear buttons (orange) */
+#clear_unit_form,
+#clear_sprite_form {
+    background:#fd7e14; /* orange */
+}
+#clear_unit_form:hover,
+#clear_sprite_form:hover {
+    background:#fd7e14;
+}
+
+/* delete buttons (red) */
+#delete_unit_button,
+#delete_all_units_button {
+    background:#dc3545; /* red */
+}
+#delete_unit_button:hover,
+#delete_all_units_button:hover {
+    background:#dc3545;
+}
+
+
+/* --- preview box style --- */
+.preview-box {
+    border: 2px dashed #ccc;
+    height: 400px;
+    background: #333;
+    display: grid;
+    place-items: center;
+    color: #888;
+    font-size: 1.2em;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    overflow: hidden; 
+}
+
+/* --- file uploader styles --- */
+#file-upload-group {
+    display: flex;
+    align-items: center;
+}
+
+.file-upload-label {
+    padding: 8px 12px;
+    background: #007bff; /* blue */
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    flex-shrink: 0;
+}
+
+.file-upload-label:hover {
+    background: #0056b3;
+}
+
+#file_name_display {
+    margin-left: 10px;
+    font-style: italic;
+    color: #555;
+}
+
+/* --- checkbox styles --- */
+.form-group-inline {
+    display: flex;
+    align-items: center;
+}
+.form-group-inline input {
+    width: auto;
+    margin-right: 10px;
+}
+.form-group-inline label {
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+/* --- modal styles --- */
+
+#help-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    background: #ffa000;
+    color: white;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-right: 15px;
+}
+#help-icon:hover {
+    background: #ffc107;
+}
+
+#help-modal {
+    display: none; /* hidden by default */
+    position: fixed; /* stays in place */
+    z-index: 100; /* sits on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* enables scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* black w/ transparency */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% from top, centered horizontally */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px; /* max width */
+    border-radius: 8px;
+    position: relative;
+}
+
+.modal-content h2,
+.modal-content h3 {
+    margin-top: 0;
+    color: #333;
+}
+.modal-content ul,
+.modal-content ol {
+    margin-bottom: 15px;
+}
+.modal-content li {
+    margin-bottom: 5px;
+}
+.modal-content code {
+    background: #eee;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+#close-modal {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+}
+#close-modal:hover,
+#close-modal:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
