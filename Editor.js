@@ -156,7 +156,7 @@ function initSpriteEditor() {
         });
     }
 
-    downloadButton.addEventListener('click', () => {
+    downloadButton.addEventListener('click', async () => { // Make the function 'async'
         const configString = configOutput.value;
         if (configString.trim() === '') {
             alert('Config string is empty. Please fill in the fields.');
@@ -164,8 +164,24 @@ function initSpriteEditor() {
         }
         const char = charSelect.value.trim() || charSelect.placeholder;
         const anim = animSelect.value.trim() || animSelect.placeholder;
-        const filename = `${char}_${anim}.txt`;
-        downloadFile(configString, filename, 'text/plain');
+        
+        const txtFilename = `${char}_${anim}.txt`;
+        const zipFilename = `${char}_${anim}.zip`; // This is the file you will download
+
+        try {
+            const zip = new JSZip();
+            zip.file(txtFilename, configString); // Add the text file to the zip
+            
+            // Generate the zip file as a blob
+            const zipContent = await zip.generateAsync({ type: 'blob' });
+            
+            // Download the zip file (this will work!)
+            downloadFile(zipContent, zipFilename, ''); 
+
+        } catch (err) {
+            console.error('Error zipping .txt file:', err);
+            alert('Failed to create .zip file for .txt config.');
+        }
     });
 
     updatePrefixPlaceholder();
@@ -380,13 +396,28 @@ function initUnitEditor() {
     updateUnitButton.addEventListener('click', updateSelectedUnit); 
     unitList.addEventListener('click', loadUnitForEditing); 
 
-    downloadButton.addEventListener('click', () => {
+    downloadButton.addEventListener('click', async () => { // Make the function 'async'
         if (allUnits.length === 0) {
             alert("No units to download! Click 'Add as New Unit' first.");
             return;
         }
         const jsonString = jsonOutput.value;
-        downloadFile(jsonString, 'config.json', 'application/json');
+        const zipFilename = 'config.zip'; // This is the file you will download
+
+        try {
+            const zip = new JSZip();
+            zip.file('config.json', jsonString); // Add the json file to the zip
+
+            // Generate the zip file as a blob
+            const zipContent = await zip.generateAsync({ type: 'blob' });
+
+            // Download the zip file (this will work!)
+            downloadFile(zipContent, zipFilename, '');
+
+        } catch (err) {
+            console.error('Error zipping .json file:', err);
+            alert('Failed to create .zip file for config.json.');
+        }
     });
 }
 
@@ -394,7 +425,9 @@ function initUnitEditor() {
  * generic helper function to download a file
  */
 function downloadFile(content, filename, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
+    // This function now correctly uses the mimeType it is given.
+    const blob = new Blob([content], { type: mimeType }); 
+    
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = filename;
