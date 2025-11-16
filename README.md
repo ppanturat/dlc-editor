@@ -1,5 +1,5 @@
 # DLC Editor 
-for p5.js and Processing
+For p5.js and Processing
 
 A web-based tool built with HTML, CSS, and JavaScript to help create and manage DLC (Downloadable Content) for p5.js and Processing games.
 
