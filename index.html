@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="libraries/p5.min.js"></script>
+    <script src="libraries/jszip.min.js"></script> 
     <script language="javascript" type="text/javascript" src="Editor.js"></script>
     <script language="javascript" type="text/javascript" src="Preview.js"></script>
+    <script language="javascript" type="text/javascript" src="Cutter.js"></script>
     
     <link rel="stylesheet" href="style.css">
 
@@ -23,7 +25,7 @@
         <div class="tab-nav">
             <button class="tab-link active" id="tab-unit">Unit Editor (.json)</button>
             <button class="tab-link" id="tab-sprite">Sprite Editor (.txt)</button>
-        </div>
+            <button class="tab-link" id="tab-cutter">Sprite Cutter (.zip)</button> </div>
 
         <div class="tab-content active" id="unit-editor-content">
             <p>Use this tool to create new characters. Add one or more units, then download the final <strong>config.json</strong> file.</p>
@@ -178,8 +180,57 @@
             <div class="preview-box" id="canvas-container">
             </div>
         </div>
+        
+        <div class="tab-content" id="cutter-content">
+            <p>Use this tool to cut one or more spritesheets into individual frames and download them as a <strong>.zip</strong> file.</p>
+            
+            <fieldset>
+                <legend>Load Spritesheets</legend>
+                <p style="font-size: 0.9em; color: #555;">Select multiple files (e.g., Warrior_Idle_Sheet.png, Warrior_Attack_Sheet.png) organized in a folder structure.</p>
+                <div class="form-group" id="cutter-upload-group">
+                    <input type="file" id="cutter_import" accept="image/png, image/jpeg" multiple style="display: none;">
+                    <label for="cutter_import" class="file-upload-label">Choose Spritesheets</label>
+                    <span id="cutter_file_name">No files selected.</span>
+                </div>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Grid Dimensions</legend>
+                <p style="font-size: 0.9em; color: #555;">How is your spritesheet arranged?</p>
+                
+                <div class="form-group">
+                    <label for="calc_mode">Calculation Mode:</label>
+                    <select id="calc_mode">
+                        <option value="count">Define by Count (Rows/Cols) - recommended</option>
+                        <option value="size">Define by Pixel Size (Width/Height)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sprite_width">Sprite Width (px)</label>
+                    <input type="number" id="sprite_width" placeholder="(Auto-Calculated)" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="sprite_height">Sprite Height (px)</label>
+                    <input type="number" id="sprite_height" placeholder="(Auto-Calculated)" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="sprite_rows">Number of Rows</label>
+                    <input type="number" id="sprite_rows" placeholder="e.g., 8">
+                </div>
+                <div class="form-group">
+                    <label for="sprite_cols">Number of Columns</label>
+                    <input type="number" id="sprite_cols" placeholder="e.g., 10">
+                </div>
+            </fieldset>
 
-    </div> <div id="help-modal">
+            <button type="button" id="cut_and_download_button">Cut & Download .zip</button>
+        </div>
+
+
+    </div> 
+    
+    <div id="help-modal">
         <div class="modal-content">
             <span id="close-modal">&times;</span>
             <h2>How to Use This Editor</h2>
@@ -189,28 +240,38 @@
                 <li><strong>Load Project (Optional):</strong> Click "Choose File" to load an existing `config.json`.</li>
                 <li><strong>Fill Details:</strong> Fill in the form for a new unit.</li>
                 <li><strong>Add Unit:</strong> Click "Add as New Unit".</li>
-                <li><strong>Edit a Unit:</strong> Click a unit's name from the "Current Units" list. Its data will load into the form.</li>
+                <li><strong>Edit a Unit:</strong> Click a unit's name from the "Current Units" list.</li>
                 <li><strong>Save Edits:</strong> Change the data, then click "Update Selected Unit".</li>
-                <li><strong>Manage Units:</strong> Select a unit and click "Delete Selected" or "Delete All Units".</li>
                 <li><strong>Download:</strong> Click "Download config.json" to save.</li>
             </ol>
 
             <h3>Sprite Editor (.txt) Tab</h3>
             <ol>
-                <li><strong>Set Names:</strong> Type the `Character Folder Name` and `Animation Name` (e.g., `data/Warrior/Idle`).</li>
-                <li><strong>Configure Files:</strong> Set the `Image File Prefix` (e.g., `Warrior_Idle_`), extension, and `Frame Count`.</li>
+                <li><strong>Set Names:</strong> Type the `Character Folder Name` and `Animation Name`.</li>
+                <li><strong>Configure Files:</strong> Set the `Image File Prefix`, extension, and `Frame Count`.</li>
                 <li><strong>Set Position:</strong> Set the X/Y coordinates and Scale.</li>
                 <li><strong>Test Preview (Optional):</strong>
                     <ul>
                         <li>Make sure you have a `data` folder inside this editor's project folder.</li>
                         <li>Check the "Enable Live Preview" box.</li>
-                        <li><strong>Test Tip:</strong> Folder: `Warrior`, Animation: `Idle`, Prefix: `Warrior_Idle_`, Frames: `6`</li>
                     </ul>
                 </li>
                 <li><strong>Download:</strong> Click "Download .txt" to save the config string.</li>
             </ol>
+            
+            <h3>Sprite Cutter (.zip) Tab</h3>
+            <ol>
+                <li><strong>Load Spritesheets:</strong> Click "Choose Spritesheets" and select one or more images. Files must follow the naming format: <code>Character_Animation_Sheet.png</code> (e.g., <code>Warrior_Idle_Sheet.png</code>).</li>
+                <li><strong>Grid Dimensions:</strong> Select a calculation mode:
+                    <ul>
+                        <li><strong>Define by Count (recommended):</strong> Enter the number of rows and columns in your spritesheet. The pixel dimensions will be calculated automatically.</li>
+                        <li><strong>Define by Pixel Size:</strong> Enter the width and height of a single sprite frame in pixels. The rows and columns will be calculated automatically.</li>
+                    </ul>
+                </li>
+                <li><strong>Download:</strong> Click "Cut & Download .zip" to generate a zip file with your sprites organized in a folder structure: <code>Character/Animation/images/</code>.</li>
+            </ol>
         </div>
     </div>
 
-    </body>
+</body>
 </html>

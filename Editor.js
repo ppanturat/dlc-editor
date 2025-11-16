@@ -9,30 +9,58 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- tab switching logic ---
     const tabUnit = document.getElementById('tab-unit');
     const tabSprite = document.getElementById('tab-sprite');
+    const tabCutter = document.getElementById('tab-cutter'); // New Tab
+    
     const contentUnit = document.getElementById('unit-editor-content');
     const contentSprite = document.getElementById('sprite-editor-content');
+    const contentCutter = document.getElementById('cutter-content'); // New Content
 
     tabUnit.addEventListener('click', () => {
         contentUnit.style.display = 'block';
         contentSprite.style.display = 'none';
+        contentCutter.style.display = 'none';
+        
         tabUnit.classList.add('active');
         tabSprite.classList.remove('active');
+        tabCutter.classList.remove('active');
     });
 
     tabSprite.addEventListener('click', () => {
         contentUnit.style.display = 'none';
         contentSprite.style.display = 'block';
+        contentCutter.style.display = 'none';
+        
         tabUnit.classList.remove('active');
         tabSprite.classList.add('active');
+        tabCutter.classList.remove('active');
     });
 
-    // --- initialize both editors ---
+    // Logic for the 3rd tab (Cutter)
+    tabCutter.addEventListener('click', () => {
+        contentUnit.style.display = 'none';
+        contentSprite.style.display = 'none';
+        contentCutter.style.display = 'block';
+        
+        tabUnit.classList.remove('active');
+        tabSprite.classList.remove('active');
+        tabCutter.classList.add('active');
+    });
+
+    // --- initialize all editors ---
     initSpriteEditor();
     initUnitEditor();
+    
+    // Initialize the cutter (Function defined in Cutter.js)
+    if (typeof initSpriteCutter === 'function') {
+        initSpriteCutter(); 
+    } else {
+        console.warn('initSpriteCutter not found. Make sure Cutter.js is loaded before Editor.js');
+    }
 
     // set the default tab
     contentUnit.style.display = 'block';
     contentSprite.style.display = 'none';
+    contentCutter.style.display = 'none';
     
     // --- help modal logic ---
     const helpIcon = document.getElementById('help-icon');
@@ -62,6 +90,7 @@ function initSpriteEditor() {
     const configOutput = document.getElementById('config_output');
     const downloadButton = document.getElementById('download_button');
     const clearSpriteFormButton = document.getElementById('clear_sprite_form');
+    const previewCheck = document.getElementById('enable_preview_check');
 
     function generateConfigString() {
         const char = charSelect.value.trim() || charSelect.placeholder;
@@ -73,13 +102,18 @@ function initSpriteEditor() {
         const y = posYInput.value || posYInput.placeholder;
         const scale = scaleInput.value || scaleInput.placeholder;
         
-        if (charSelect.value.trim() === '' && animSelect.value.trim() === '' && prefixInput.value.trim() === '') {
-             configOutput.value = '';
-             return;
+        let configString = '';
+        
+        if (charSelect.value.trim() !== '' || animSelect.value.trim() !== '' || prefixInput.value.trim() !== '') {
+             configString = [char, anim, prefix, ext, frames, x, y, scale].join(' ');
         }
 
-        const configString = [char, anim, prefix, ext, frames, x, y, scale].join(' ');
         configOutput.value = configString;
+
+        // Connect to Preview.js logic
+        if (previewCheck && previewCheck.checked && typeof updatePreview === 'function') {
+            updatePreview(configString);
+        }
     }
 
     function updatePrefixPlaceholder() {
@@ -110,6 +144,17 @@ function initSpriteEditor() {
     posYInput.addEventListener('input', generateConfigString);
     scaleInput.addEventListener('input', generateConfigString);
     clearSpriteFormButton.addEventListener('click', clearSpriteForm);
+
+    // Listener for the preview checkbox
+    if (previewCheck) {
+        previewCheck.addEventListener('change', () => {
+            if (previewCheck.checked) {
+                generateConfigString();
+            } else if (typeof updatePreview === 'function') {
+                updatePreview(''); // Clear preview
+            }
+        });
+    }
 
     downloadButton.addEventListener('click', () => {
         const configString = configOutput.value;
@@ -154,7 +199,7 @@ function initUnitEditor() {
     const unitList = document.getElementById('unit_list');
     const deleteUnitButton = document.getElementById('delete_unit_button');
     const deleteAllUnitsButton = document.getElementById('delete_all_units_button');
-    const updateUnitButton = document.getElementById('update_unit_button'); // new button
+    const updateUnitButton = document.getElementById('update_unit_button');
     
     // file display
     const fileNameDisplay = document.getElementById('file_name_display');
@@ -197,8 +242,7 @@ function initUnitEditor() {
             unitName.focus();
             return;
         }
-        // validation
-
+        
         const health = unitHealth.value || unitHealth.placeholder;
         const atk = unitAtk.value || unitAtk.placeholder;
         const def = unitDef.value || unitDef.placeholder;
@@ -243,17 +287,13 @@ function initUnitEditor() {
         event.target.value = null;
     }
 
-    /**
-     * new function: loads a unit's data into the form for editing
-     */
     function loadUnitForEditing() {
         const selectedIndex = unitList.value;
-        if (selectedIndex === '') return; // nothing selected
+        if (selectedIndex === '') return;
 
         const index = parseInt(selectedIndex);
         const unit = allUnits[index];
         
-        // populate the form
         unitName.value = unit.detail.name;
         unitHealth.value = unit.detail.health;
         unitAtk.value = unit.detail.atk;
@@ -264,41 +304,32 @@ function initUnitEditor() {
         walkSelect.value = unit.walkConfig;
         deathSelect.value = unit.deathConfig;
         
-        // set the editing index
         currentlyEditingIndex = index;
     }
     
-    /**
-     * new function: saves changes to the currently editing unit
-     */
     function updateSelectedUnit() {
         if (currentlyEditingIndex === -1) {
             alert('Please click a unit from the list to load it before updating.');
             return;
         }
         
-        // validation (same as addunit)
         if (unitName.value.trim() === '') {
             alert('Please enter a Character Name.');
             unitName.focus();
             return;
         }
         
-        // get values from form
         const health = unitHealth.value || unitHealth.placeholder;
         const atk = unitAtk.value || unitAtk.placeholder;
         const def = unitDef.value || unitDef.placeholder;
         
-        // create the updated unit object
         const updatedUnit = {
             "detail": { "name": unitName.value, "health": parseInt(health), "atk": parseInt(atk), "def": parseInt(def), "description": unitDesc.value || "No description." },
             "idleConfig": idleSelect.value, "attackConfig": attackSelect.value, "walkConfig": walkSelect.value, "deathConfig": deathSelect.value
         };
         
-        // replace the old unit with the new one
         allUnits[currentlyEditingIndex] = updatedUnit;
         
-        // refresh everything
         updateJsonOutput();
         updateUnitList();
         clearUnitForm();
@@ -311,7 +342,6 @@ function initUnitEditor() {
             return;
         }
         
-        // if the user deletes the unit they are editing, clear the form
         if (currentlyEditingIndex == selectedIndex) {
             clearUnitForm();
         }
@@ -319,7 +349,6 @@ function initUnitEditor() {
         const indexToDelete = parseInt(selectedIndex);
         allUnits.splice(indexToDelete, 1);
         
-        // if this messed up the editing index, reset it
         if (currentlyEditingIndex > indexToDelete) {
              currentlyEditingIndex--;
         }
@@ -348,12 +377,12 @@ function initUnitEditor() {
     deleteUnitButton.addEventListener('click', deleteSelectedUnit);
     clearUnitFormButton.addEventListener('click', clearUnitForm);
     deleteAllUnitsButton.addEventListener('click', deleteAllUnits);
-    updateUnitButton.addEventListener('click', updateSelectedUnit); // new
-    unitList.addEventListener('click', loadUnitForEditing); // new
+    updateUnitButton.addEventListener('click', updateSelectedUnit); 
+    unitList.addEventListener('click', loadUnitForEditing); 
 
     downloadButton.addEventListener('click', () => {
         if (allUnits.length === 0) {
-            alert("No units to download! Click 'Add Unit to JSON' first.");
+            alert("No units to download! Click 'Add as New Unit' first.");
             return;
         }
         const jsonString = jsonOutput.value;
@@ -363,6 +392,7 @@ function initUnitEditor() {
 
 /**
  * generic helper function to download a file
+ * This is used by both Editor.js (for JSON/TXT) and Cutter.js (for ZIP)
  */
 function downloadFile(content, filename, mimeType) {
     const blob = new Blob([content], { type: mimeType });

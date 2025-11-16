@@ -19,7 +19,6 @@ body {
     margin-bottom: 15px; 
 }
 
-/* --- title styles --- */
 .D {
   color: #ff007f;
 }
@@ -48,10 +47,9 @@ textarea {
     background: #eee;
 }
 
-/* --- primary buttons (green) --- */
 button {
     padding: 10px 15px;
-    background: #28a745 ; /* green */
+    background: #28a745;
     color: white;
     border: none;
     border-radius: 4px;
@@ -63,9 +61,8 @@ button {
 
 button:hover { background: #218838; }
 
-/* --- update button (green) --- */
 #update_unit_button {
-    background: #28a745; /* green */
+    background: #28a745;
 }
 #update_unit_button:hover {
     background: #218838;
@@ -85,7 +82,6 @@ legend {
     color: #333;
 }
 
-/* --- tab navigation styles --- */
 .tab-nav {
     border-bottom: 2px solid #ccc;
     margin-bottom: 20px;
@@ -115,29 +111,25 @@ legend {
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
-/* --- end tab styles --- */
 
-/* --- secondary/destructive buttons --- */
 .small-button {
     padding: 8px 12px;
     margin-top: 10px;
     font-size: 0.9em;
 }
 
-/* clear buttons (orange) */
 #clear_unit_form,
 #clear_sprite_form {
-    background:#fd7e14; /* orange */
+    background:#fd7e14;
 }
 #clear_unit_form:hover,
 #clear_sprite_form:hover {
     background:#e66a00;
 }
 
-/* delete buttons (red) */
 #delete_unit_button,
 #delete_all_units_button {
-    background:#dc3545; /* red */
+    background:#dc3545;
 }
 #delete_unit_button:hover,
 #delete_all_units_button:hover {
@@ -145,7 +137,6 @@ legend {
 }
 
 
-/* --- preview box style --- */
 .preview-box {
     border: 2px dashed #ccc;
     height: 400px;
@@ -159,15 +150,15 @@ legend {
     overflow: hidden; 
 }
 
-/* --- file uploader styles --- */
-#file-upload-group {
+#file-upload-group,
+#cutter-upload-group {
     display: flex;
     align-items: center;
 }
 
 .file-upload-label {
     padding: 8px 12px;
-    background: #007bff; /* blue */
+    background: #007bff;
     color: white;
     border-radius: 4px;
     cursor: pointer;
@@ -179,13 +170,14 @@ legend {
     background: #0056b3;
 }
 
-#file_name_display {
+#file_name_display,
+#cutter_file_name {
     margin-left: 10px;
     font-style: italic;
     color: #555;
 }
 
-/* --- checkbox styles --- */
+/* checkbox styles */
 .form-group-inline {
     display: flex;
     align-items: center;
@@ -199,7 +191,7 @@ legend {
     font-weight: normal;
 }
 
-/* --- modal styles --- */
+/* modal styles */
 
 #help-icon {
     position: absolute;
@@ -222,44 +214,68 @@ legend {
 }
 
 #help-modal {
-    display: none; /* hidden by default */
-    position: fixed; /* stays in place */
-    z-index: 100; /* sits on top */
+    display: none;
+    position: fixed;
+    z-index: 100;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* enables scroll if needed */
-    background-color: rgba(0,0,0,0.5); /* black w/ transparency */
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto; /* 10% from top, centered horizontally */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px; /* max width */
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid #ddd;
+    width: 90%;
+    max-width: 700px;
     border-radius: 8px;
     position: relative;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
-.modal-content h2,
-.modal-content h3 {
+.modal-content h2 {
     margin-top: 0;
+    margin-bottom: 25px;
     color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    font-size: 1.5em;
 }
-.modal-content ul,
-.modal-content ol {
+
+.modal-content h3 {
+    margin-top: 20px;
     margin-bottom: 15px;
+    color: #0056b3;
+    font-size: 1.15em;
 }
+
+.modal-content ol {
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
 .modal-content li {
-    margin-bottom: 5px;
+    margin-bottom: 12px;
+    line-height: 1.6;
 }
+
+.modal-content ul {
+    margin: 10px 0;
+    padding-left: 30px;
+}
+
 .modal-content code {
-    background: #eee;
-    padding: 2px 5px;
+    background: #f4f4f4;
+    padding: 3px 6px;
     border-radius: 3px;
+    font-family: monospace;
+    color: #d63384;
 }
 
 #close-modal {
