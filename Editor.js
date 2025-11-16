@@ -392,7 +392,6 @@ function initUnitEditor() {
 
 /**
  * generic helper function to download a file
- * This is used by both Editor.js (for JSON/TXT) and Cutter.js (for ZIP)
  */
 function downloadFile(content, filename, mimeType) {
     const blob = new Blob([content], { type: mimeType });
