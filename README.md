@@ -6,7 +6,7 @@ This editor provides three integrated tools for managing game assets and configu
 
 ## 🚀 Live Demo
 
-**Try the editor live at: [dlc-editor.netlify.app](https://dlc-editor.netlify.app)**
+**Try the editor live at: [dlc-editor.netlify.app](https://dlc-editor.netlify.app) or [dlc-editor.netlify.app](https://ppanturat.github.io/dlc-editor/)**
 
 ---
 
