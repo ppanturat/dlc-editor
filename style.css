@@ -19,14 +19,6 @@ body {
     margin-bottom: 15px; 
 }
 
-.D {
-  color: #ff007f;
-}
-
-.C {
-  color: #006699;
-}
-
 label { 
     display: block; 
     font-weight: bold; 
@@ -150,10 +142,24 @@ legend {
     overflow: hidden; 
 }
 
+.info-box {
+    background:#f0f8ff; 
+    padding:10px; 
+    margin-bottom:10px; 
+    border-left: 4px solid #007bff; 
+    font-size: 0.9em;
+}
+
 #file-upload-group,
 #cutter-upload-group {
     display: flex;
     align-items: center;
+}
+
+.compiler-file-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .file-upload-label {
@@ -171,7 +177,10 @@ legend {
 }
 
 #file_name_display,
-#cutter_file_name {
+#cutter_file_name,
+#compiler_json_display,
+#compiler_txt_display,
+#compiler_zip_display {
     margin-left: 10px;
     font-style: italic;
     color: #555;
@@ -270,14 +279,14 @@ legend {
     padding-left: 30px;
 }
 
-.modal-content code {
+.modal-content code,
+.info-box code {
     background: #f4f4f4;
     padding: 3px 6px;
     border-radius: 3px;
     font-family: monospace;
     color: #d63384;
 }
-
 #close-modal {
     color: #aaa;
     position: absolute;

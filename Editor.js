@@ -9,58 +9,89 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- tab switching logic ---
     const tabUnit = document.getElementById('tab-unit');
     const tabSprite = document.getElementById('tab-sprite');
-    const tabCutter = document.getElementById('tab-cutter'); // New Tab
+    const tabCutter = document.getElementById('tab-cutter');
+    const tabCompiler = document.getElementById('tab-compiler');
     
     const contentUnit = document.getElementById('unit-editor-content');
     const contentSprite = document.getElementById('sprite-editor-content');
-    const contentCutter = document.getElementById('cutter-content'); // New Content
+    const contentCutter = document.getElementById('cutter-content');
+    const contentCompiler = document.getElementById('compiler-content');
 
+    // 1st tab (Unit)
     tabUnit.addEventListener('click', () => {
         contentUnit.style.display = 'block';
         contentSprite.style.display = 'none';
         contentCutter.style.display = 'none';
+        contentCompiler.style.display = 'none';
         
         tabUnit.classList.add('active');
         tabSprite.classList.remove('active');
         tabCutter.classList.remove('active');
+        tabCompiler.classList.remove('active');
     });
 
+    // 2nd tab (Sprite)
     tabSprite.addEventListener('click', () => {
         contentUnit.style.display = 'none';
         contentSprite.style.display = 'block';
         contentCutter.style.display = 'none';
+        contentCompiler.style.display = 'none';
         
         tabUnit.classList.remove('active');
         tabSprite.classList.add('active');
         tabCutter.classList.remove('active');
+        tabCompiler.classList.remove('active');
     });
 
-    // Logic for the 3rd tab (Cutter)
+    // 3rd tab (Cutter)
     tabCutter.addEventListener('click', () => {
         contentUnit.style.display = 'none';
         contentSprite.style.display = 'none';
         contentCutter.style.display = 'block';
+        contentCompiler.style.display = 'none';
         
         tabUnit.classList.remove('active');
         tabSprite.classList.remove('active');
         tabCutter.classList.add('active');
+        tabCompiler.classList.remove('active');
     });
+
+    // 4th tab (Compiler)
+    tabCompiler.addEventListener('click', () => {
+        contentUnit.style.display = 'none';
+        contentSprite.style.display = 'none';
+        contentCutter.style.display = 'none';
+        contentCompiler.style.display = 'block';
+
+        tabUnit.classList.remove('active');
+        tabSprite.classList.remove('active');
+        tabCutter.classList.remove('active');
+        tabCompiler.classList.add('active');
+    })
 
     // --- initialize all editors ---
     initSpriteEditor();
     initUnitEditor();
     
-    // Initialize the cutter (Function defined in Cutter.js)
+    // initialize the cutter (Function defined in Cutter.js)
     if (typeof initSpriteCutter === 'function') {
         initSpriteCutter(); 
     } else {
         console.warn('initSpriteCutter not found. Make sure Cutter.js is loaded before Editor.js');
     }
 
+    // initialize the compiler (Function defined in Compiler.js)
+    if (typeof initCompiler === 'function') {
+        initCompiler(); 
+    } else {
+        console.warn('initCompiler not found. Make sure Compiler.js is loaded before Editor.js');
+    }
+
     // set the default tab
     contentUnit.style.display = 'block';
     contentSprite.style.display = 'none';
     contentCutter.style.display = 'none';
+    contentCompiler.style.display = 'none';
     
     // --- help modal logic ---
     const helpIcon = document.getElementById('help-icon');
@@ -393,16 +424,63 @@ function initUnitEditor() {
     unitList.addEventListener('click', loadUnitForEditing); 
 
     downloadButton.addEventListener('click', () => {
-    if (allUnits.length === 0) {
-        alert("No units to download! Click 'Add Unit to JSON' first.");
-        return;
-    }
-    // Ensure proper JSON formatting
-    const jsonString = JSON.stringify(allUnits, null, 2);
+        if (allUnits.length === 0) {
+            alert("No units to download! Click 'Add Unit' first.");
+            return;
+        }
 
-    // Pass correct mime type
-    downloadFile(jsonString, 'config.json', 'application/json');
-});
+        // Helper to make filenames safe (remove spaces, special chars)
+        const getSafeName = (name) => name.replace(/[^a-zA-Z0-9-_]/g, '_');
+
+        // CASE 1: Single Unit -> Download one .json file
+        if (allUnits.length === 1) {
+            const unit = allUnits[0];
+            const safeName = getSafeName(unit.detail.name);
+            const fileName = `Unit_${safeName}.json`;
+            
+            // Stringify just this single unit object
+            const jsonString = JSON.stringify(unit, null, 2);
+            
+            downloadFile(jsonString, fileName, 'application/json');
+        } 
+        // CASE 2: Multiple Units -> Download a .zip file
+        else {
+            if (typeof JSZip === 'undefined') {
+                alert("JSZip library is missing! Please add the script tag to your HTML.");
+                return;
+            }
+
+            const zip = new JSZip();
+            const usedNames = new Set();
+
+            allUnits.forEach((unit, index) => {
+                let safeName = getSafeName(unit.detail.name);
+                
+                // Handle duplicate names by appending index if necessary
+                if (usedNames.has(safeName)) {
+                    safeName = `${safeName}_${index}`;
+                }
+                usedNames.add(safeName);
+
+                const fileName = `Unit_${safeName}.json`;
+                const jsonString = JSON.stringify(unit, null, 2);
+
+                // Add file to zip
+                zip.file(fileName, jsonString);
+            });
+
+            // Generate and download zip
+            zip.generateAsync({ type: "blob" }).then((content) => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = "Units.zip";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            });
+        }
+    });
 
 /**
  * generic helper function to download a file
