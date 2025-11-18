@@ -66,3 +66,12 @@ Simply use the live demo provided above.
 └── libraries/        # Dependencies
     ├── p5.min.js
     └── jszip.min.js
+└── data/             # Required for Live Preview
+    └── Warrior/      # For testing (given)
+        └── Idle/
+            ├── Warrior_Idle_1.png
+            ├── Warrior_Idle_2.png
+            ├── Warrior_Idle_3.png
+            ├── Warrior_Idle_4.png
+            ├── Warrior_Idle_5.png
+            ├── Warrior_Idle_6.png
