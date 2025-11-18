@@ -1,7 +1,6 @@
 /**
  * Logic for the Sprite Cutter (.zip) tab
  * Supports multiple spritesheet files with automatic folder structure parsing.
- * Fixes: ZIP download issue by using an empty MIME type to force correct extension.
  */
 function initSpriteCutter() {
     // DOM Elements
@@ -20,7 +19,7 @@ function initSpriteCutter() {
     let cutterImages = {}; // Map of {characterFolder/animationName: image}
     let fileMetadata = []; // Array of {file, folder, anim, prefix}
 
-    // --- 2. Grid Calculation Logic ---
+    // --- Grid Calculation Logic ---
     function updateGridCalculations() {
         // Use the first image to calculate grid (applies to all files)
         const firstImage = Object.values(cutterImages)[0];
@@ -172,7 +171,7 @@ function initSpriteCutter() {
         event.target.value = null;
     });
 
-    // --- 3. Download Logic ---
+    // --- Download Logic ---
     downloadButton.addEventListener('click', async () => {
         if (Object.keys(cutterImages).length === 0) {
             alert('Please load one or more spritesheet images first.');
@@ -256,8 +255,6 @@ function initSpriteCutter() {
                 zipFilename = `${firstFolder}.zip`;
             }
             
-            // FIX: Pass an EMPTY string for MIME type. 
-            // This forces the browser to default to the extension provided in the filename (.zip)
             downloadFile(zipContent, zipFilename, ''); 
 
         } catch (err) {
